@@ -43,6 +43,7 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Build;
 import android.support.v4.media.session.MediaSessionCompat;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.IntDef;
@@ -1156,7 +1157,11 @@ public class PlayerNotificationManager {
     Notification notification = builder.build();
     notificationManager.notify(notificationId, notification);
     if (!isNotificationStarted) {
-      context.registerReceiver(notificationBroadcastReceiver, intentFilter);
+      if (Build.VERSION.SDK_INT < 33) {
+        return context.registerReceiver(notificationBroadcastReceiver, intentFilter);
+      } else {
+        return context.registerReceiver(notificationBroadcastReceiver, intentFilter, Context.RECEIVER_NOT_EXPORTED);
+      }
     }
     if (notificationListener != null) {
       // Always pass true for ongoing with the first notification to tell a service to go into
